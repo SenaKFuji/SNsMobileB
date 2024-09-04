@@ -1,5 +1,6 @@
 package jp.ac.meijou.android.s231205089;
 
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -14,6 +15,10 @@ import android.text.TextWatcher;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.Button;
+
+import android.content.Intent;
+
+import java.util.Optional;
 
 import jp.ac.meijou.android.s231205089.databinding.ActivityMainBinding;
 
@@ -36,33 +41,38 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        binding.saveButton.setOnClickListener(view -> {
-            var text = binding.editTextText.getText().toString();
-            prefDataStore.setString("name", text);
+        // OK
+        binding.buttonOK.setOnClickListener(view -> {
+            var intentOK = new Intent();
+            intentOK.putExtra("okR", "OK");
+            setResult(RESULT_OK, intentOK);
+            finish();
         });
 
-        binding.editTextText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                binding.text.setText(editable.toString());
-            }
+        // Cancel
+        binding.buttonC.setOnClickListener(view -> {
+            setResult(RESULT_CANCELED);
+            finish();
         });
     }
+
+
 
     @Override
     protected void onStart() {
         super.onStart();
         prefDataStore.getString("name")
                 .ifPresent(name -> binding.text.setText(name));
+        /*
+        Optional.ofNullable(getIntent().getStringExtra("sendContent"))
+                .ifPresent(textR -> binding.text.setText(textR));
+
+         */
+
+        Intent intentR = getIntent();
+        Bundle bundle = intentR.getExtras();
+        String textR = getIntent().getStringExtra("sendContent");
+        binding.text.setText(textR);
     }
+
 }
